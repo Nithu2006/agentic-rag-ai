@@ -240,6 +240,7 @@ This makes it possible to inspect the system beyond simply displaying an answer.
 ---
 
 ## 🏗️ Project Architecture
+![Agentic RAG AI Architecture](docs/architecture/agentic-rag-architecture.png)
 
 ```text
 agentic-rag-ai/

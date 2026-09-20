@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Agentic RAG AI</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f4f6f9;
+
+            color: #1f2937;
+
+            min-height: 100vh;
+
+        }
+
+
+        .header {
+
+            background: #111827;
+
+            color: white;
+
+            padding: 22px 40px;
+
+        }
+
+
+        .header h1 {
+
+            font-size: 28px;
+
+        }
+
+
+        .header p {
+
+            margin-top: 6px;
+
+            color: #cbd5e1;
+
+        }
+
+
+        .container {
+
+            width: 90%;
+
+            max-width: 1100px;
+
+            margin: 30px auto;
+
+        }
+
+
+        .card {
+
+            background: white;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.07);
+
+        }
+
+
+        .card h2 {
+
+            margin-bottom: 12px;
+
+            color: #111827;
+
+        }
+
+
+        .upload-description {
+
+            color: #6b7280;
+
+            margin-bottom: 18px;
+
+            line-height: 1.5;
+
+        }
+
+
+        .file-input {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            background: #f9fafb;
+
+        }
+
+
+        .upload-button {
+
+            margin-top: 15px;
+
+            padding: 12px 22px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #059669;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .upload-button:hover {
+
+            background: #047857;
+
+        }
+
+
+        .upload-button:disabled {
+
+            background: #9ca3af;
+
+            cursor: not-allowed;
+
+        }
+
+
+        .upload-status {
+
+            margin-top: 15px;
+
+            padding: 10px;
+
+            border-radius: 7px;
+
+            font-size: 14px;
+
+        }
+
+
+        textarea {
+
+            width: 100%;
+
+            min-height: 120px;
+
+            padding: 15px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            resize: vertical;
+
+            font-size: 16px;
+
+            outline: none;
+
+        }
+
+
+        textarea:focus {
+
+            border-color: #2563eb;
+
+        }
+
+
+        .ask-button {
+
+            margin-top: 15px;
+
+            padding: 12px 25px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .ask-button:hover {
+
+            background: #1d4ed8;
+
+        }
+
+
+        .ask-button:disabled {
+
+            background: #9ca3af;
+
+            cursor: not-allowed;
+
+        }
+
+
+        .loading {
+
+            display: none;
+
+            margin-top: 18px;
+
+            color: #2563eb;
+
+            font-weight: bold;
+
+        }
+
+
+        .error {
+
+            display: none;
+
+            margin-top: 18px;
+
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+        }
+
+
+        .result {
+
+            display: none;
+
+        }
+
+
+        .answer {
+
+            line-height: 1.8;
+
+            white-space: pre-wrap;
+
+            color: #374151;
+
+        }
+
+
+        .metrics {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(180px, 1fr)
+                );
+
+            gap: 15px;
+
+        }
+
+
+        .metric {
+
+            background: #f8fafc;
+
+            border: 1px solid #e5e7eb;
+
+            padding: 16px;
+
+            border-radius: 8px;
+
+        }
+
+
+        .metric-title {
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        .metric-value {
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            color: #111827;
+
+        }
+
+
+        .plan-step {
+
+            padding: 10px 12px;
+
+            margin-bottom: 7px;
+
+            background: #f8fafc;
+
+            border-left: 4px solid #2563eb;
+
+            border-radius: 5px;
+
+        }
+
+
+        .citation {
+
+            background: #f8fafc;
+
+            border-left: 4px solid #059669;
+
+            padding: 12px;
+
+            margin-top: 8px;
+
+            border-radius: 5px;
+
+            font-size: 14px;
+
+        }
+
+
+        .citation a {
+
+            color: #2563eb;
+
+            text-decoration: none;
+
+        }
+
+
+        .citation a:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        .verification-box {
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e5e7eb;
+
+        }
+
+
+        .evaluation {
+
+            background: #111827;
+
+            color: #e5e7eb;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            overflow-x: auto;
+
+        }
+
+
+        .evaluation pre {
+
+            white-space: pre-wrap;
+
+            word-wrap: break-word;
+
+        }
+
+
+        .footer {
+
+            text-align: center;
+
+            padding: 30px;
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .header {
+
+                padding: 20px;
+
+            }
+
+
+            .container {
+
+                width: 94%;
+
+            }
+
+
+            .card {
+
+                padding: 18px;
+
+            }
+
+
+            .header h1 {
+
+                font-size: 23px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <header class="header">
+
+        <h1>
+            🤖 Agentic RAG AI
+        </h1>
+
+        <p>
+            Multi-Agent Retrieval Augmented Generation System
+        </p>
+
+    </header>
+
+
+    <main class="container">
+
+
+        <!-- ========================================= -->
+        <!-- DOCUMENT UPLOAD -->
+        <!-- ========================================= -->
+
+        <section class="card">
+
+            <h2>
+                📄 Upload Document
+            </h2>
+
+            <p class="upload-description">
+
+                Upload a PDF or TXT document.
+                The system will process the document,
+                create chunks, generate embeddings,
+                and store them in the FAISS vector database.
+
+            </p>
+
+
+            <input
+                type="file"
+                id="documentFile"
+                class="file-input"
+                accept=".pdf,.txt"
+            >
+
+
+            <button
+                id="uploadButton"
+                class="upload-button"
+                onclick="uploadDocument()"
+            >
+
+                Upload Document
+
+            </button>
+
+
+            <div
+                id="uploadStatus"
+                class="upload-status"
+            ></div>
+
+        </section>
+
+
+
+        <!-- ========================================= -->
+        <!-- QUESTION -->
+        <!-- ========================================= -->
+
+        <section class="card">
+
+            <h2>
+                💬 Ask Your Question
+            </h2>
+
+            <p class="upload-description">
+
+                Ask a question about your uploaded
+                documents. The Agentic RAG system will
+                retrieve relevant information and
+                generate a response.
+
+            </p>
+
+
+            <textarea
+                id="query"
+                placeholder="Example: What is machine learning?"
+            ></textarea>
+
+
+            <button
+                id="askButton"
+                class="ask-button"
+                onclick="askQuestion()"
+            >
+
+                Ask Agentic RAG
+
+            </button>
+
+
+            <div
+                id="loading"
+                class="loading"
+            >
+
+                🔎 Processing your question...
+                Please wait.
+
+            </div>
+
+
+            <div
+                id="error"
+                class="error"
+            ></div>
+
+        </section>
+
+
+
+        <!-- ========================================= -->
+        <!-- RESULTS -->
+        <!-- ========================================= -->
+
+        <section
+            id="result"
+            class="result"
+        >
+
+
+            <!-- ANSWER -->
+
+            <div class="card">
+
+                <h2>
+                    🤖 Answer
+                </h2>
+
+                <div
+                    id="answer"
+                    class="answer"
+                ></div>
+
+            </div>
+
+
+
+            <!-- RESPONSE METRICS -->
+
+            <div class="card">
+
+                <h2>
+                    📊 Response Metrics
+                </h2>
+
+
+                <div class="metrics">
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Confidence
+                        </div>
+
+                        <div
+                            id="confidence"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Documents Retrieved
+                        </div>
+
+                        <div
+                            id="documentsRetrieved"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Retrieval Quality
+                        </div>
+
+                        <div
+                            id="retrievalQuality"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Answer Length
+                        </div>
+
+                        <div
+                            id="answerLength"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- AGENT PLAN -->
+
+            <div class="card">
+
+                <h2>
+                    🧠 Agent Execution Plan
+                </h2>
+
+                <div id="plan"></div>
+
+            </div>
+
+
+
+            <!-- CITATIONS -->
+
+            <div class="card">
+
+                <h2>
+                    📚 Sources & Citations
+                </h2>
+
+                <div id="citations"></div>
+
+            </div>
+
+
+
+            <!-- VERIFICATION -->
+
+            <div class="card">
+
+                <h2>
+                    🔍 Answer Verification
+                </h2>
+
+
+                <div class="metrics">
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Verification Status
+                        </div>
+
+                        <div
+                            id="verificationStatus"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Evidence Support
+                        </div>
+
+                        <div
+                            id="supportScore"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Evidence Sources
+                        </div>
+
+                        <div
+                            id="evidenceCount"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div class="metric-title">
+                            Evidence Available
+                        </div>
+
+                        <div
+                            id="evidenceAvailable"
+                            class="metric-value"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                    id="verificationMessage"
+                    class="verification-box"
+                >
+
+                    Verification information will
+                    appear here after asking a question.
+
+                </div>
+
+            </div>
+
+
+
+            <!-- EVALUATION -->
+
+            <div class="card">
+
+                <h2>
+                    📈 Evaluation Details
+                </h2>
+
+                <div class="evaluation">
+
+                    <pre id="evaluation"></pre>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <footer class="footer">
+
+        Agentic RAG AI © 2026
+
+    </footer>
+
+
+
+    <script>
+
+
+        // =========================================
+        // API CONFIGURATION
+        // =========================================
+
+        const API_BASE_URL =
+            "http://127.0.0.1:8000";
+
+
+
+        // =========================================
+        // UPLOAD DOCUMENT
+        // =========================================
+
+        async function uploadDocument() {
+
+
+            const fileInput =
+                document.getElementById(
+                    "documentFile"
+                );
+
+
+            const uploadButton =
+                document.getElementById(
+                    "uploadButton"
+                );
+
+
+            const status =
+                document.getElementById(
+                    "uploadStatus"
+                );
+
+
+            if (
+                !fileInput.files ||
+                fileInput.files.length === 0
+            ) {
+
+                status.textContent =
+                    "❌ Please select a PDF or TXT file.";
+
+                status.style.background =
+                    "#fee2e2";
+
+                status.style.color =
+                    "#991b1b";
+
+                return;
+
+            }
+
+
+            const file =
+                fileInput.files[0];
+
+
+            const fileName =
+                file.name.toLowerCase();
+
+
+            if (
+                !fileName.endsWith(".pdf") &&
+                !fileName.endsWith(".txt")
+            ) {
+
+                status.textContent =
+                    "❌ Only PDF and TXT files are supported.";
+
+                status.style.background =
+                    "#fee2e2";
+
+                status.style.color =
+                    "#991b1b";
+
+                return;
+
+            }
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "file",
+                file
+            );
+
+
+            uploadButton.disabled =
+                true;
+
+
+            uploadButton.textContent =
+                "Uploading...";
+
+
+            status.textContent =
+                "⏳ Uploading and processing " +
+                file.name +
+                "...";
+
+
+            status.style.background =
+                "#eff6ff";
+
+            status.style.color =
+                "#1d4ed8";
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        API_BASE_URL +
+                        "/upload",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        "Document upload failed."
+                    );
+
+                }
+
+
+                status.textContent =
+                    "✅ " +
+                    data.filename +
+                    " uploaded successfully. " +
+                    (
+                        data.total_documents ??
+                        data.documents_loaded ??
+                        1
+                    ) +
+                    " document(s) are now in the " +
+                    "knowledge base, " +
+                    data.chunks_created +
+                    " chunk(s) indexed.";
+
+
+                status.style.background =
+                    "#dcfce7";
+
+                status.style.color =
+                    "#166534";
+
+
+                fileInput.value = "";
+
+
+            }
+
+            catch (error) {
+
+
+                status.textContent =
+                    "❌ Upload failed: " +
+                    error.message;
+
+
+                status.style.background =
+                    "#fee2e2";
+
+                status.style.color =
+                    "#991b1b";
+
+            }
+
+            finally {
+
+
+                uploadButton.disabled =
+                    false;
+
+
+                uploadButton.textContent =
+                    "Upload Document";
+
+            }
+
+        }
+
+
+
+        // =========================================
+        // ASK QUESTION
+        // =========================================
+
+        async function askQuestion() {
+
+
+            const queryInput =
+                document.getElementById(
+                    "query"
+                );
+
+
+            const askButton =
+                document.getElementById(
+                    "askButton"
+                );
+
+
+            const loading =
+                document.getElementById(
+                    "loading"
+                );
+
+
+            const result =
+                document.getElementById(
+                    "result"
+                );
+
+
+            const error =
+                document.getElementById(
+                    "error"
+                );
+
+
+            const query =
+                queryInput.value.trim();
+
+
+            if (!query) {
+
+                error.style.display =
+                    "block";
+
+                error.textContent =
+                    "❌ Please enter a question.";
+
+                return;
+
+            }
+
+
+            error.style.display =
+                "none";
+
+
+            result.style.display =
+                "none";
+
+
+            loading.style.display =
+                "block";
+
+
+            askButton.disabled =
+                true;
+
+
+            askButton.textContent =
+                "Thinking...";
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        API_BASE_URL +
+                        "/query",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                query: query
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        "Query failed."
+                    );
+
+                }
+
+
+                displayResult(data);
+
+
+            }
+
+            catch (err) {
+
+
+                error.style.display =
+                    "block";
+
+
+                error.textContent =
+                    "❌ Error: " +
+                    err.message;
+
+
+            }
+
+            finally {
+
+
+                loading.style.display =
+                    "none";
+
+
+                askButton.disabled =
+                    false;
+
+
+                askButton.textContent =
+                    "Ask Agentic RAG";
+
+            }
+
+        }
+
+
+
+        // =========================================
+        // DISPLAY RESULT
+        // =========================================
+
+        function displayResult(data) {
+
+
+            const result =
+                document.getElementById(
+                    "result"
+                );
+
+
+            const answer =
+                document.getElementById(
+                    "answer"
+                );
+
+
+            const confidence =
+                document.getElementById(
+                    "confidence"
+                );
+
+
+            const documentsRetrieved =
+                document.getElementById(
+                    "documentsRetrieved"
+                );
+
+
+            const retrievalQuality =
+                document.getElementById(
+                    "retrievalQuality"
+                );
+
+
+            const answerLength =
+                document.getElementById(
+                    "answerLength"
+                );
+
+
+            const plan =
+                document.getElementById(
+                    "plan"
+                );
+
+
+            const citations =
+                document.getElementById(
+                    "citations"
+                );
+
+
+            const evaluation =
+                document.getElementById(
+                    "evaluation"
+                );
+
+
+            const verificationStatus =
+                document.getElementById(
+                    "verificationStatus"
+                );
+
+
+            const supportScore =
+                document.getElementById(
+                    "supportScore"
+                );
+
+
+            const evidenceCount =
+                document.getElementById(
+                    "evidenceCount"
+                );
+
+
+            const evidenceAvailable =
+                document.getElementById(
+                    "evidenceAvailable"
+                );
+
+
+            const verificationMessage =
+                document.getElementById(
+                    "verificationMessage"
+                );
+
+
+            result.style.display =
+                "block";
+
+
+            // =====================================
+            // ANSWER
+            // =====================================
+
+            answer.textContent =
+                data.answer ||
+                "No answer generated.";
+
+
+            // =====================================
+            // CONFIDENCE
+            // =====================================
+
+            const confidenceValue =
+                Number(
+                    data.confidence || 0
+                );
+
+
+            confidence.textContent =
+                (
+                    confidenceValue * 100
+                ).toFixed(1) + "%";
+
+
+            // =====================================
+            // RETRIEVAL METRICS
+            // =====================================
+
+            const retrieval =
+                data.evaluation &&
+                data.evaluation.retrieval
+                    ? data.evaluation.retrieval
+                    : {};
+
+
+            const responseMetrics =
+                data.evaluation &&
+                data.evaluation.response
+                    ? data.evaluation.response
+                    : {};
+
+
+            documentsRetrieved.textContent =
+                retrieval.documents_retrieved ??
+                (
+                    data.retrieved_documents
+                        ? data.retrieved_documents.length
+                        : 0
+                );
+
+
+            retrievalQuality.textContent =
+                Number(
+                    retrieval.retrieval_quality || 0
+                ).toFixed(2);
+
+
+            answerLength.textContent =
+                responseMetrics.answer_length ??
+                (
+                    data.answer
+                        ? data.answer.length
+                        : 0
+                );
+
+
+            // =====================================
+            // AGENT PLAN
+            // =====================================
+
+            plan.innerHTML =
+                "";
+
+
+            if (
+                data.plan &&
+                data.plan.length > 0
+            ) {
+
+
+                data.plan.forEach(
+                    function(step, index) {
+
+
+                        const div =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        div.className =
+                            "plan-step";
+
+
+                        div.textContent =
+                            "Step " +
+                            (index + 1) +
+                            ": " +
+                            step;
+
+
+                        plan.appendChild(
+                            div
+                        );
+
+                    }
+                );
+
+
+            }
+
+            else {
+
+
+                plan.textContent =
+                    "No agent plan available.";
+
+            }
+
+
+
+            // =====================================
+            // CITATIONS
+            // =====================================
+
+            citations.innerHTML =
+                "";
+
+
+            if (
+                data.citations &&
+                data.citations.length > 0
+            ) {
+
+
+                data.citations.forEach(
+                    function(citation, index) {
+
+
+                        const div =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        div.className =
+                            "citation";
+
+
+                        const title =
+                            citation.title ||
+                            "Source " +
+                            (index + 1);
+
+
+                        const url =
+                            citation.url ||
+                            "";
+
+
+                        if (url) {
+
+
+                            const link =
+                                document.createElement(
+                                    "a"
+                                );
+
+
+                            link.href =
+                                url;
+
+
+                            link.target =
+                                "_blank";
+
+
+                            link.rel =
+                                "noopener noreferrer";
+
+
+                            link.textContent =
+                                "[" +
+                                (index + 1) +
+                                "] " +
+                                title;
+
+
+                            div.appendChild(
+                                link
+                            );
+
+
+                        }
+
+                        else {
+
+
+                            div.textContent =
+                                "[" +
+                                (index + 1) +
+                                "] " +
+                                title;
+
+                        }
+
+
+                        citations.appendChild(
+                            div
+                        );
+
+                    }
+                );
+
+
+            }
+
+            else {
+
+
+                citations.textContent =
+                    "No citations available.";
+
+            }
+
+
+
+            // =====================================
+            // VERIFICATION
+            // =====================================
+
+            const verification =
+                data.verification || {};
+
+
+            const status =
+                verification.status ||
+                "Not available";
+
+
+            verificationStatus.textContent =
+                status;
+
+
+            supportScore.textContent =
+                (
+                    Number(
+                        verification.support_score ||
+                        0
+                    ) * 100
+                ).toFixed(1) + "%";
+
+
+            evidenceCount.textContent =
+                verification.evidence_count ??
+                0;
+
+
+            evidenceAvailable.textContent =
+                verification.evidence_available
+                    ? "Yes"
+                    : "No";
+
+
+            // =====================================
+            // VERIFICATION MESSAGE
+            // =====================================
+
+            if (
+                status === "verified"
+            ) {
+
+                verificationMessage.textContent =
+                    "✅ The generated answer has " +
+                    "strong textual support from " +
+                    "the available evidence.";
+
+            }
+
+            else if (
+                status === "partially_verified"
+            ) {
+
+                verificationMessage.textContent =
+                    "⚠️ The generated answer has " +
+                    "partial textual support. " +
+                    "Some information may require " +
+                    "additional verification.";
+
+            }
+
+            else if (
+                status === "low_support"
+            ) {
+
+                verificationMessage.textContent =
+                    "⚠️ The generated answer has " +
+                    "low textual support from the " +
+                    "available evidence.";
+
+            }
+
+            else {
+
+                verificationMessage.textContent =
+                    "Verification information " +
+                    "is not available.";
+
+            }
+
+
+
+            // =====================================
+            // EVALUATION DETAILS
+            // =====================================
+
+            evaluation.textContent =
+                JSON.stringify(
+                    data.evaluation || {},
+                    null,
+                    4
+                );
+
+
+            // =====================================
+            // SCROLL TO RESULTS
+            // =====================================
+
+            result.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+
+
+
+        // =========================================
+        // ENTER KEY SUPPORT
+        // =========================================
+
+        document
+            .getElementById("query")
+            .addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (
+                        event.key === "Enter" &&
+                        !event.shiftKey
+                    ) {
+
+                        event.preventDefault();
+
+                        askQuestion();
+
+                    }
+
+                }
+            );
+
+
+    </script>
+
+
+</body>
+
+</html>

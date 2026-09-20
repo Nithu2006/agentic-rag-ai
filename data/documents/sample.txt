@@ -1,0 +1,7 @@
+Artificial Intelligence and Machine Learning
+
+Artificial Intelligence is a field of computer science that focuses on creating systems capable of performing tasks that normally require human intelligence.
+
+Machine Learning is a subset of Artificial Intelligence. It enables computer systems to learn patterns from data and make predictions or decisions without being explicitly programmed for every task.
+
+Deep Learning is a subset of Machine Learning that uses neural networks with multiple layers to learn complex patterns from large datasets.
